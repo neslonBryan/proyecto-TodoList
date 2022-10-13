@@ -3,34 +3,32 @@
 
     session_start();
     if(!empty($_SESSION['active'])){
-        header('location:');
+        header('location:principal.php');
     }
     else{
     if(!empty($_POST)){
-        if(empty($_POST['usuario'])||empty($_POST['clave'])){
-            $alert='Ingrese su usuario y clave';
+        if(empty($_POST['email'])||empty($_POST['contraseña'])){
+            $alert='Ingrese su email y clave';
         }
         else{
             require_once "conexion.php";
-            $user = $_POST['usuario'];
-            $pass = $_POST['clave'];
+            $usuario = $_POST['email'];
+            $contraseña = $_POST['contraseña'];
             
-            $query = mysqli_query($conection,"SELECT * FROM usuario WHERE usuario ='$user' AND clave ='$pass'");
+            $query = mysqli_query($conection,"SELECT * FROM Tusuario WHERE correoElec ='$usuario' AND contraseñaElec ='$contraseña'");
             $result = mysqli_num_rows($query);
             
             if($result > 0){
                 $data = mysqli_fetch_array($query);
                 $_SESSION['active'] = true;
-                $_SESSION['idUser'] = $data['idusuario'];
-                $_SESSION['nombre'] = $data['nombre'];
-                $_SESSION['email'] = $data['email'];
-                $_SESSION['user'] = $data['usuario'];
-                $_SESSION['rol'] = $data['rol'];
-
-                header('location:sistema/');
+                $_SESSION['nombresCuenta'] = $data['nombresCuenta'];
+                $_SESSION['apellidosCuenta'] = $data['ApellidosCuenta'];
+                $_SESSION['email'] = $data['correoElec'];
+                $_SESSION['telefono'] = $data['phone'];
+                header('location:principal.php');
             }
             else{
-                $alert='El usuario o clave son incorrectos';
+                $alert='El email o clave son incorrectos';
                 session_destroy();
             }
         }
@@ -55,8 +53,10 @@
         <form action="" method="post">
         <h3 id="ti">Iniciar sesion</h3>
         <img src="img/usuario.jpg" alt="login">
-        <input type="text" name="usuario" placeholder="Ingrese el correo" require>
-        <input type="password" name="clave" placeholder="Ingrese la contraseña" require>
+
+        <input type="text" name="email" placeholder="Ingrese el correo" require>
+        <input type="password" name="contraseña" placeholder="Ingrese la contraseña" require>
+        
         <div class="alert"><?php echo isset($alert) ? $alert : '';?></div>
         <input type="submit" value="Ingresar">
         </form>
